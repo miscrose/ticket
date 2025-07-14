@@ -1,16 +1,32 @@
 import { useState } from "react"
-import { Link, useLocation } from "react-router-dom"
-import { IconMenu2, IconDashboard, IconListDetails, IconUsers } from "@tabler/icons-react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { IconMenu2, IconDashboard, IconListDetails } from "@tabler/icons-react"
+import axios from 'axios';
 
 const navItems = [
   { title: "Dashboard", url: "/dashboard", icon: IconDashboard },
-  { title: "Tickets", url: "/dashboard/tickets", icon: IconListDetails },
-  { title: "Profil", url: "/dashboard/profile", icon: IconUsers },
+  { title: "calendrier", url: "/dashboard/calendrier", icon: IconListDetails },
+
 ]
 
 export function AppSidebar() {
   const [open, setOpen] = useState(true)
   const location = useLocation()
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await axios.post('/api/logout', {}, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      localStorage.removeItem('token');
+      navigate('/login');
+    } catch (e) {
+      alert('Erreur lors de la déconnexion');
+    }
+  };
 
   return (
     <aside
@@ -60,7 +76,24 @@ export function AppSidebar() {
           className="p-4 border-t border-gray-800 text-sm transition-all duration-300"
           style={{ transitionProperty: "opacity, width" }}
         >
-          Utilisateur connecté
+        
+          <button
+            onClick={handleLogout} 
+            style={{
+              
+              marginTop: 12,
+              width: '100%',
+              padding: '8px 0',
+              background: '#e53935',
+              color: 'white',
+              border: 'none',
+              borderRadius: 4,
+              cursor: 'pointer',
+              fontWeight: 'bold',
+            }}
+          >
+            Déconnexion
+          </button>
         </div>
       )}
     </aside>

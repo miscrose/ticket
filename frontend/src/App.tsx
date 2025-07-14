@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import LoginPage from './pages/Login'
 import SignupPage from './pages/Signup'
 import Dashboard from './pages/Dashboard'
+import Calendrier from './pages/Calendrier';
 
 
 
@@ -19,7 +20,10 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/Dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />}>
+            <Route path="calendrier" element={<Calendrier />} />
+           
+          </Route>
    
         </Routes>
       </Router>
