@@ -8,7 +8,7 @@ import LoginPage from './pages/Login'
 import SignupPage from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import Calendrier from './pages/Calendrier';
-
+import KanbanPage from './pages/Kanban';
 
 
 function App() {
@@ -22,7 +22,8 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/dashboard" element={<Dashboard />}>
             <Route path="calendrier" element={<Calendrier />} />
-           
+            
+            <Route path="kanban" element={<KanbanPage />} />
           </Route>
    
         </Routes>

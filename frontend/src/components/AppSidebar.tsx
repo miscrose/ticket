@@ -1,13 +1,14 @@
 import { useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { IconMenu2, IconDashboard, IconListDetails } from "@tabler/icons-react"
+import { IconMenu2, IconDashboard, IconListDetails, IconUsers } from "@tabler/icons-react"
 import axios from 'axios';
 
 const navItems = [
   { title: "Dashboard", url: "/dashboard", icon: IconDashboard },
   { title: "calendrier", url: "/dashboard/calendrier", icon: IconListDetails },
-
-]
+  { title: "Profil", url: "/dashboard/account", icon: IconUsers },
+  { title: "Kanban", url: "/dashboard/kanban", icon: IconListDetails },
+];
 
 export function AppSidebar() {
   const [open, setOpen] = useState(true)
@@ -16,7 +17,7 @@ export function AppSidebar() {
 
   const handleLogout = async () => {
     try {
-      await axios.post('/api/logout', {}, {
+      await axios.post('http://127.0.0.1:8000/api/logout', {}, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },

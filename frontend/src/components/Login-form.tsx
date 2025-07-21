@@ -20,8 +20,9 @@ export function LoginForm() {
         { email, password },
         { headers: { "Accept": "application/json" } }
       )
-      console.log(res)
+      console.log(res.data)
       localStorage.setItem("token", res.data.token)
+      localStorage.setItem("role", res.data.role)
       navigate("/dashboard")
     } catch (err: any) {
       setError(err.response?.data?.error || "Erreur de connexion")

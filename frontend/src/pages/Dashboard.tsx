@@ -3,9 +3,9 @@ import { Outlet } from "react-router-dom"
 
 export default function Dashboard() {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen">
       <AppSidebar />
-      <main className="flex-1 bg-gray-100 p-8">
+      <main className="flex-1 bg-gray-100 p-8 overflow-hidden">
         <Outlet />
       </main>
     </div>

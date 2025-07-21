@@ -20,10 +20,13 @@ class AuthController extends Controller
         if (!$token = JWTAuth::attempt($request->only('email', 'password'))) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+        $user = JWTAuth::user();
+        $role = $user->getRoleNames()->first(); 
         return response()->json([
             'message' => 'Connexion réussie',
             'token' => $token,
-            'user' => JWTAuth::user(),
+            'user' => $user,
+            'role' => $role,
         ]);
     }
 
@@ -35,15 +38,28 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
         $token = JWTAuth::fromUser($user);
+        $user->assignRole('user');
+        $role = $user->getRoleNames()->first();
         return response()->json([
             'message' => 'Inscription réussie',
             'token' => $token,
             'user' => $user,
+            'role' => $role,
         ], 201);
     }
 
     public function me()
     {
         return response()->json(JWTAuth::user());
+    }
+
+    public function logout(Request $request)
+    {
+        try {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            return response()->json(['message' => 'Déconnexion réussie']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la déconnexion'], 500);
+        }
     }
 }

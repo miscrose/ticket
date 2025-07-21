@@ -23,6 +23,7 @@ export function SignupForm() {
       )
       console.log(res)
       localStorage.setItem("token", res.data.token)
+      localStorage.setItem("role", res.data.role)
       navigate("/dashboard")
     } catch (err: any) {
       setError(err.response?.data?.error || "Erreur lors de l'inscription")

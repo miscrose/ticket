@@ -1,0 +1,78 @@
+/* Styles CSS pour le Kanban - Ajoutez à votre CSS global ou importez */
+
+/* Animations pour le drag & drop */
+.kanban-card {
+  transition: all 0.2s ease;
+}
+
+.kanban-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.kanban-card.dragging {
+  transform: rotate(5deg) scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+/* Colonnes Kanban */
+.kanban-column {
+  transition: background-color 0.2s ease;
+}
+
+.kanban-column.drag-over {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+}
+
+/* Scrollbar personnalisée */
+.kanban-column::-webkit-scrollbar {
+  width: 6px;
+}
+
+.kanban-column::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.kanban-column::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.kanban-column::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Utilitaires pour le texte */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 2;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+/* Animation d'apparition */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
