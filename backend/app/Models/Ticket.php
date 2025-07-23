@@ -12,7 +12,7 @@ class Ticket extends Model
     'status',
     'priority',
     'user_id',
-    
+    'done_at',
     ];
 
     public function user() {

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->enum('status', ['todo', 'in-progress', 'done'])->default('todo');
             $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->timestamp('done_at')->nullable();
+
             $table->timestamps();
         });
     }

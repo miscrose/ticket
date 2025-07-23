@@ -21,7 +21,8 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/ticket_status_update/{id}', [TicketController::class, 'ticket_status_update']);
 
      Route::get('/allUsers', [adminController::class, 'allUsers']);
-
+     Route::post('/grantAdmin', [adminController::class, 'grantAdmin']);
+     Route::put('/profile', [AuthController::class, 'profile']);
 
 
 

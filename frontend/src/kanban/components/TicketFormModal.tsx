@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "../../src/components/ui/button";
+import { Button } from "../../components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -9,9 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../src/components/ui/dialog";
-import { Input } from "../../src/components/ui/input";
-import { Label } from "../../src/components/ui/label";
+} from "../../components/ui/dialog";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 import axios from "axios";
 import { SelectBox } from "./selectBox";
 import type { selectOption } from "../types/option";

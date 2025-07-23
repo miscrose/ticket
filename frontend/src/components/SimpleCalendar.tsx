@@ -17,7 +17,7 @@ const TicketCard = ({ title }: { title: string }) => (
   }}>{title}</div>
 );
 
-// Types
+
 interface Ticket {
   id: number;
   date: string; // 'YYYY-MM-DD'
@@ -36,7 +36,7 @@ function SimpleCalendar({ tickets }: SimpleCalendarProps) {
   const weekStart = currentWeekStart;
   const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
 
-  // Génère les 7 jours de la semaine
+  
   const days: Date[] = [];
   let day = weekStart;
   for (let i = 0; i < 7; i++) {
@@ -44,17 +44,17 @@ function SimpleCalendar({ tickets }: SimpleCalendarProps) {
     day = addDays(day, 1);
   }
 
-  // Navigation
+
   const prevWeek = () => setCurrentWeekStart(subWeeks(currentWeekStart, 1));
   const nextWeek = () => setCurrentWeekStart(addWeeks(currentWeekStart, 1));
 
-  // Pour chaque jour, filtrer les tickets
+
   const getTicketsForDay = (date: Date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
     return tickets.filter(t => t.date === dateStr);
   };
 
-  // Format header semaine
+
   const headerLabel = `Semaine du ${format(weekStart, 'dd/MM/yyyy')} au ${format(weekEnd, 'dd/MM/yyyy')}`;
 
   return (

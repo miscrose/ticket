@@ -6,7 +6,7 @@ import axios from 'axios';
 const navItems = [
   { title: "Dashboard", url: "/dashboard", icon: IconDashboard },
   { title: "calendrier", url: "/dashboard/calendrier", icon: IconListDetails },
-  { title: "Profil", url: "/dashboard/account", icon: IconUsers },
+  { title: "Profil", url: "/dashboard/Profil", icon: IconUsers },
   { title: "Kanban", url: "/dashboard/kanban", icon: IconListDetails },
 ];
 

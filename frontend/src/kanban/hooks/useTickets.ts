@@ -6,6 +6,7 @@ import axios from "axios";
 
 export function useTickets() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [searchItem, setSearchItem] = useState('');
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -48,5 +49,25 @@ console.log(response.data)
     [updateTicket],
   )
 
-  return { tickets, addTicket, updateTicket, deleteTicket, moveTicket };
+ const filterSearch = useCallback( ()=>{
+  if (!searchItem) return tickets;
+  return tickets.filter(ticket =>
+    ticket.title.toLowerCase().includes(searchItem.toLowerCase()) 
+  
+  );
+}, [searchItem, tickets]);
+
+
+
+  
+
+
+
+
+
+
+
+
+
+  return { tickets, addTicket, updateTicket, deleteTicket, moveTicket, filterSearch , searchItem, setSearchItem};
 }

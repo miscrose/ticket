@@ -8,6 +8,7 @@ import { TicketFormModal } from "./TicketFormModal";
 import type { Ticket, TicketStatus } from "../types/ticket"
 import axios from "axios";
 import { toast, Toaster } from "sonner";
+import { Input } from "@/components/ui/input"
 const columns = [
   { id: "todo" as const, title: "À faire", color: "bg-blue-50 border-blue-200" },
   { id: "in-progress" as const, title: "En cours", color: "bg-orange-50 border-orange-200" },
@@ -15,7 +16,7 @@ const columns = [
 ]
 
 export function KanbanBoard() {
-  const { tickets, moveTicket,addTicket } = useTickets()
+  const { tickets, moveTicket, addTicket, searchItem, setSearchItem, filterSearch } = useTickets()
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null)
   const [draggedTicket, setDraggedTicket] = useState<string | null>(null)
 
@@ -84,13 +85,16 @@ export function KanbanBoard() {
 
   return (
     <div className="p-6 h-screen flex flex-col">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between gap-4">
+      <Input placeholder="Rechercher par titre " value={searchItem} onChange={(e) => setSearchItem(e.target.value)} className="w-1/2" />
         <TicketFormModal onSubmit={handleCreateTicket} />
+      
       </div>
       <Toaster />
+    
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 h-0 items-stretch">
         {columns.map((column) => {
-          const columnTickets = tickets.filter((ticket) => ticket.status === column.id)
+          const columnTickets = filterSearch().filter((ticket) => ticket.status === column.id)
 
           return (
             <KanbanColumn

@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogClose,
-} from "../../src/components/ui/dialog";
+} from "../../components/ui/dialog";
 import type { Ticket } from "../types/ticket";
 
 interface TicketModalProps {

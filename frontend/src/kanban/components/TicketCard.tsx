@@ -6,7 +6,7 @@ import { Badge } from "./ui/Badge"
 import { Button } from "./ui/Button"
 import type { Ticket } from "../types/ticket"
 
-// Icons simples en SVG (remplacez par vos icônes préférées)
+
 const CalendarIcon = () => (
   <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path

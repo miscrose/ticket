@@ -21,7 +21,11 @@ class TicketController extends Controller
            
             $data['user_id'] = $user->id;
         }
-    
+        if($request->status =='done'){
+            $data['done_at'] = now();
+        }else{
+            $data['done_at'] =null;
+        }
         $ticket = Ticket::create($data);
     
         return response()->json($ticket);
@@ -71,6 +75,9 @@ class TicketController extends Controller
        
         if ($ticket->user_id== $user->id || $user->hasRole("admin"))
         { $ticket->status = $request->input('status');
+            if($request->status == 'done'){
+            $ticket->done_at = now();
+             }else{$ticket->done_at =null;}
             $ticket->save();
         
             $ticket->load('user');
