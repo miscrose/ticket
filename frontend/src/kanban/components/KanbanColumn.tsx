@@ -15,6 +15,7 @@ interface KanbanColumnProps {
   onDrop: (e: React.DragEvent, status: TicketStatus) => void
   onDragStart: (e: React.DragEvent, ticketId: string) => void
   onViewDetails: (ticket: Ticket) => void
+  onEdit: (ticket: Ticket) => void
 }
 
 export function KanbanColumn({
@@ -27,6 +28,7 @@ export function KanbanColumn({
   onDrop,
   onDragStart,
   onViewDetails,
+  onEdit,
 }: KanbanColumnProps) {
   return (
     <div
@@ -50,6 +52,7 @@ export function KanbanColumn({
             isDragging={draggedTicket === ticket.id}
             onDragStart={onDragStart}
             onViewDetails={onViewDetails}
+            onEdit={onEdit}
           />
         ))}
 

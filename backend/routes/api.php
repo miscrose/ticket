@@ -24,7 +24,7 @@ Route::middleware('auth:api')->group(function () {
      Route::post('/grantAdmin', [adminController::class, 'grantAdmin']);
      Route::put('/profile', [AuthController::class, 'profile']);
 
-
+    Route::put('/tickets/update/{id}', [TicketController::class, 'update']);
 
 
     });

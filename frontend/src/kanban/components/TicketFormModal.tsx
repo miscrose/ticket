@@ -19,14 +19,27 @@ import type { selectOption } from "../types/option";
 
 
 
-export function TicketFormModal({ onSubmit }: { onSubmit?: (data: any) => void }) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState("medium");
-  const [status, setStatus] = useState("todo");
+export function TicketFormModal({ ticket, isOpen, onOpenChange, onSubmit }: {
+  ticket?: any,
+  isOpen: boolean,
+  onOpenChange: (open: boolean) => void,
+  onSubmit?: (data: any) => void
+}) {
+  const [title, setTitle] = useState(ticket?.title || "");
+  const [description, setDescription] = useState(ticket?.description || "");
+  const [priority, setPriority] = useState(ticket?.priority || "medium");
+  const [status, setStatus] = useState(ticket?.status || "todo");
   const isadmin = localStorage.getItem("role") === "admin";
   const [users, setUsers] = useState<any[]>([]);
-  const [selectedUser, setSelectedUser] = useState<selectOption | null>(null);
+  const [selectedUser, setSelectedUser] = useState<selectOption | null>(ticket?.user ? { key: String(ticket.user.id), label: ticket.user.name, ...ticket.user } : null);
+
+  useEffect(() => {
+    setTitle(ticket?.title || "");
+    setDescription(ticket?.description || "");
+    setPriority(ticket?.priority || "medium");
+    setStatus(ticket?.status || "todo");
+    setSelectedUser(ticket?.user ? { key: String(ticket.user.id), label: ticket.user.name, ...ticket.user } : null);
+  }, [ticket]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -37,7 +50,6 @@ export function TicketFormModal({ onSubmit }: { onSubmit?: (data: any) => void }
             Accept: "application/json",
           },
         });
-        console.log(res)
         setUsers(res.data);
       } catch (err) {
         console.error("Erreur lors du chargement des utilisateurs", err);
@@ -47,7 +59,6 @@ export function TicketFormModal({ onSubmit }: { onSubmit?: (data: any) => void }
       fetchUsers();
     }
   }, [isadmin]);
-
  
   const userOptions: selectOption[] = users.map((user) => ({
     key: String(user.id),
@@ -57,23 +68,19 @@ export function TicketFormModal({ onSubmit }: { onSubmit?: (data: any) => void }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const data: any = { title, description, priority, status };
+    const data: any = { ...ticket, title, description, priority, status };
     if (isadmin && selectedUser) {
       data.user_id = selectedUser.id; 
     }
     if (onSubmit) onSubmit(data);
+    onOpenChange(false);
   };
 
-
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button>Nouveau ticket</Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Créer un ticket</DialogTitle>
-          
+          <DialogTitle>{ticket ? "Modifier le ticket" : "Créer un ticket"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -119,10 +126,6 @@ export function TicketFormModal({ onSubmit }: { onSubmit?: (data: any) => void }
               <option value="done">Terminé</option>
             </select>
           </div>
-
-
-
-
           {isadmin && (
             <div>
               <Label htmlFor="user">Assigner à</Label>
@@ -130,22 +133,17 @@ export function TicketFormModal({ onSubmit }: { onSubmit?: (data: any) => void }
                 options={userOptions}
                 placeholder="Sélectionner un utilisateur"
                 onSelect={setSelectedUser}
+                value={selectedUser}
               />
             </div>
           )}
-
-
-
-
-
-
           <DialogFooter className="sm:justify-end">
             <DialogClose asChild>
               <Button type="button" variant="ghost">
                 Annuler
               </Button>
             </DialogClose>
-            <Button type="submit">Créer</Button>
+            <Button type="submit">{ticket ? "Enregistrer" : "Créer"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

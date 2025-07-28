@@ -27,7 +27,7 @@ class TicketController extends Controller
             $data['done_at'] =null;
         }
         $ticket = Ticket::create($data);
-    
+        $ticket->load('user');
         return response()->json($ticket);
     }
 
@@ -88,5 +88,14 @@ class TicketController extends Controller
         return response()->json(['error' => 'Non autorisé'], 403);
        
     }
+
+
+    public function update(Request $request, $id)
+{
+    $ticket = Ticket::findOrFail($id);
+    $ticket->update($request->all());
+    $ticket->load('user');
+    return response()->json($ticket);
+}
 
 }

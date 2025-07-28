@@ -5,6 +5,7 @@ export interface Ticket {
   status: "todo" | "in-progress" | "done"
   priority: "low" | "medium" | "high"
   created_at: string
+  done_at?: string
   user?: { name: string }
 }
 

@@ -9,6 +9,7 @@ import type { Ticket, TicketStatus } from "../types/ticket"
 import axios from "axios";
 import { toast, Toaster } from "sonner";
 import { Input } from "@/components/ui/input"
+import { Button } from "../../components/ui/button";
 const columns = [
   { id: "todo" as const, title: "À faire", color: "bg-blue-50 border-blue-200" },
   { id: "in-progress" as const, title: "En cours", color: "bg-orange-50 border-orange-200" },
@@ -16,29 +17,41 @@ const columns = [
 ]
 
 export function KanbanBoard() {
-  const { tickets, moveTicket, addTicket, searchItem, setSearchItem, filterSearch } = useTickets()
+  const { tickets, moveTicket, addTicket, searchItem, setSearchItem, filterSearch ,updateTicket} = useTickets()
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null)
   const [draggedTicket, setDraggedTicket] = useState<string | null>(null)
-
-  const handleCreateTicket = async (data: any) => {
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editTicket, setEditTicket] = useState<Ticket | null>(null); 
+  const handleSubmitTicket = async (data: any) => {
     try {
-      const response =   await axios.post("http://127.0.0.1:8000/api/store", data, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          Accept: "application/json",
-        },
-      });
-      toast.success("Ticket créé !");
-      const ticket = response.data;
-      addTicket(ticket);
+      if (data.id) {
+        // Modification (PUT)
+        const response = await axios.put(`http://127.0.0.1:8000/api/tickets/update/${data.id}`, data, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Accept: "application/json",
+          },
+        });
+        toast.success("Ticket modifié !");
+        const ticket = response.data;
+        updateTicket(ticket.id,ticket);
+      } else {
+       
+        const response = await axios.post("http://127.0.0.1:8000/api/store", data, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Accept: "application/json",
+          },
+        });
+        toast.success("Ticket créé !");
+        addTicket(response.data);
+      }
     } catch (err) {
-      toast.error("Erreur lors de la création du ticket");
+      toast.error("Erreur lors de l'enregistrement du ticket");
     }
-
-
-
-
-    
+  
+    setCreateOpen(false);
+    setEditTicket(null);
   };
 
   const handleDragStart = (e: React.DragEvent, ticketId: string) => {
@@ -87,8 +100,21 @@ export function KanbanBoard() {
     <div className="p-6 h-screen flex flex-col">
       <div className="mb-6 flex items-center justify-between gap-4">
       <Input placeholder="Rechercher par titre " value={searchItem} onChange={(e) => setSearchItem(e.target.value)} className="w-1/2" />
-        <TicketFormModal onSubmit={handleCreateTicket} />
-      
+      <Button onClick={() => setCreateOpen(true)}>Nouveau ticket</Button>
+        <TicketFormModal
+          isOpen={createOpen}
+          onOpenChange={setCreateOpen}
+          onSubmit={handleSubmitTicket}
+        />
+
+        {editTicket && (
+          <TicketFormModal
+            ticket={editTicket}
+            isOpen={!!editTicket}
+            onOpenChange={(open) => !open && setEditTicket(null)}
+            onSubmit={handleSubmitTicket}
+          />
+        )}
       </div>
       <Toaster />
     
@@ -108,6 +134,7 @@ export function KanbanBoard() {
               onDrop={handleDrop}
               onDragStart={handleDragStart}
               onViewDetails={handleViewDetails}
+              onEdit={setEditTicket}
             />
           )
         })}

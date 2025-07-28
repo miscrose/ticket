@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import  { useState ,useEffect } from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Button } from "../../components/ui/button"
@@ -21,11 +21,16 @@ interface SelectBoxProps {
   options: selectOption[]
   placeholder?: string
   onSelect?: (option: selectOption) => void
+  value?: selectOption | null
 }
 
-export function SelectBox({ options, placeholder = "Sélectionner une option", onSelect }: SelectBoxProps) {
+export function SelectBox({ options, placeholder = "Sélectionner une option", onSelect, value }: SelectBoxProps) {
   const [open, setOpen] = useState(false)
-  const [selectedKey, setSelectedKey] = useState("")
+  const [selectedKey, setSelectedKey] = useState(value?.key || "")
+
+  useEffect(() => {
+    setSelectedKey(value?.key || "")
+  }, [value])
 
   const selectedOption = options.find((opt) => opt.key === selectedKey)
 
