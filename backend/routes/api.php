@@ -4,6 +4,7 @@ use App\Http\Controllers\adminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TicketController;
 
 
@@ -21,9 +22,10 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/ticket_status_update/{id}', [TicketController::class, 'ticket_status_update']);
 
      Route::get('/allUsers', [adminController::class, 'allUsers']);
-     Route::post('/grantAdmin', [adminController::class, 'grantAdmin']);
+     Route::put('/user/{userId}/role', [adminController::class, 'updateUserRole']);
      Route::put('/profile', [AuthController::class, 'profile']);
-
+     Route::get('/dashboard/countTicket', [DashboardController::class, 'countTicketByPeriod']);
+     Route::get('/dashboard/doneTicketsDetailsPerDay', [DashboardController::class, 'doneTicketsDetailsPerDay']);
     Route::put('/tickets/update/{id}', [TicketController::class, 'update']);
 
 

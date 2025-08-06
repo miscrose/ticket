@@ -14,17 +14,24 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $userRole = Role::firstOrCreate(['name' => 'user']);
+        $adminRole = Role::firstOrCreate([
+            'name' => 'admin',
+            'guard_name' => 'api',
+        ]);
+
+        $userRole = Role::firstOrCreate([
+            'name' => 'user',
+            'guard_name' => 'api',
+        ]);
         $adminUser = User::firstOrCreate(
-            ['email' => 'w@w'], // <-- Mets ton email ici
+            ['email' => 'w@w'], 
             [
                 'name' => 'w',
-                'password' => bcrypt('123456789') // <-- Mets ton mot de passe ici
+                'password' => bcrypt('123456789') 
             ]
         );
 
-        // Assigner le rôle admin à cet utilisateur
+       
         $adminUser->assignRole($adminRole);
     }
 }

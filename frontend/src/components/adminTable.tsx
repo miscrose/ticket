@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Table, TableHeader, TableBody, TableRow, TableCell } from "./ui/table";
+import { Input } from "./ui/input";
 
 type User = {
   id: string;
@@ -13,6 +14,8 @@ const roles = ["user", "admin"];
 
 export default function AdminTable() {
   const [users, setUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,9 +27,12 @@ export default function AdminTable() {
             Accept: "application/json",
           },
         });
-        setUsers(res.data.users || res.data); // adapte selon la structure de la réponse
+        const fetchedUsers =  res.data;
+        console.log(fetchedUsers);
+        setUsers(fetchedUsers);
+        setFilteredUsers(fetchedUsers);
       } catch (err) {
-       
+        console.error("Erreur lors de la récupération des utilisateurs:", err);
       } finally {
         setLoading(false);
       }
@@ -34,57 +40,89 @@ export default function AdminTable() {
     fetchUsers();
   }, []);
 
+  
+  useEffect(() => {
+    const filtered = users.filter(user =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredUsers(filtered);
+  }, [searchTerm, users]);
+
   const handleRoleChange = async (userId: string, newRole: string) => {
-    try {
-      await axios.put(`http://127.0.0.1:8000/api/user/${userId}/role`, { role: newRole }, {
+    try {   console.log(newRole);
+         console.log(userId);
+     const ress= await axios.put(`http://127.0.0.1:8000/api/user/${userId}/role`, { newRole }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           Accept: "application/json",
         },
       });
+      console.log(newRole);
       setUsers(users =>
         users.map(user =>
           user.id === userId ? { ...user, role: newRole } : user
         )
       );
+      console.log("Rôle assigné:", ress.data.role);
     } catch (err) {
-      // gestion d'erreur
+      console.error("Erreur lors du changement de rôle:", err);
     }
+
+
   };
 
   if (loading) return <div>Chargement...</div>;
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableCell>Nom</TableCell>
-          <TableCell>Email</TableCell>
-          <TableCell>Rôle</TableCell>
-          <TableCell>Action</TableCell>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {users.map(user => (
-          <TableRow key={user.id}>
-            <TableCell>{user.name}</TableCell>
-            <TableCell>{user.email}</TableCell>
-            <TableCell>
-              <select
-                value={user.role}
-                onChange={e => handleRoleChange(user.id, e.target.value)}
-              >
-                {roles.map(role => (
-                  <option key={role} value={role}>{role}</option>
-                ))}
-              </select>
-            </TableCell>
-            <TableCell>
-              {/* Tu peux ajouter d'autres actions ici */}
-            </TableCell>
+    <div className="space-y-4">
+    
+      <div className="flex items-center space-x-2">
+        <Input
+          type="text"
+          placeholder="Rechercher par nom..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="max-w-sm"
+        />
+        <span className="text-sm text-gray-500">
+          {filteredUsers.length} utilisateur(s) trouvé(s)
+        </span>
+      </div>
+
+   <div className="overflow-x-auto h-100">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableCell>Nom</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Rôle</TableCell>
+            <TableCell>Action</TableCell>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+       
+        <TableBody className="min-w-full" >
+          {filteredUsers.map(user => (
+            <TableRow key={user.id}>
+              <TableCell>{user.name}</TableCell>
+              <TableCell>{user.email}</TableCell>
+              <TableCell>
+                <select
+                  value={user.role}
+                  onChange={e => handleRoleChange(user.id, e.target.value)}
+                  className="border rounded px-2 py-1"
+                >
+                  {roles.map(role => (
+                    <option key={role} value={role}>{role}</option>
+                  ))}
+                </select>
+              </TableCell>
+              <TableCell>
+             
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table></div>
+    </div>
   );
 }

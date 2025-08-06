@@ -1,19 +1,46 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { IconMenu2, IconDashboard, IconListDetails, IconUsers } from "@tabler/icons-react"
 import axios from 'axios';
 
-const navItems = [
-  { title: "Dashboard", url: "/dashboard", icon: IconDashboard },
+const baseNavItems = [
+  { title: "Dashboard", url: "/dashboard/ChartPage", icon: IconDashboard },
   { title: "calendrier", url: "/dashboard/calendrier", icon: IconListDetails },
   { title: "Profil", url: "/dashboard/Profil", icon: IconUsers },
   { title: "Kanban", url: "/dashboard/kanban", icon: IconListDetails },
 ];
 
 export function AppSidebar() {
+  const [navItems, setNavItems] = useState(baseNavItems);
   const [open, setOpen] = useState(true)
   const location = useLocation()
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+
+    if (role === "admin") {
+      setNavItems((prev) => {
+       
+        const existingUrls = new Set(prev.map(item => item.url));
+        
+       
+        if (!existingUrls.has("/dashboard/adminPage")) {
+          return [
+            ...prev,
+            {
+              title: "Admin",
+              url: "/dashboard/adminPage",
+              icon: IconUsers,
+            },
+          ];
+        }
+        
+       
+        return prev;
+      });
+    }
+  }, []); 
 
   const handleLogout = async () => {
     try {
@@ -38,7 +65,7 @@ export function AppSidebar() {
     >
       <div className={`flex items-center p-4 border-b border-gray-800 ${open ? "justify-between" : "justify-center"}`}>
         {open && (
-          <span className="text-xl font-bold transition-all duration-300">MonApp</span>
+          <span className="text-xl font-bold transition-all duration-300">  </span>
         )}
         <button
           className="p-1 rounded hover:bg-gray-800"

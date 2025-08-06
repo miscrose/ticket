@@ -25,7 +25,7 @@ export function KanbanBoard() {
   const handleSubmitTicket = async (data: any) => {
     try {
       if (data.id) {
-        // Modification (PUT)
+     
         const response = await axios.put(`http://127.0.0.1:8000/api/tickets/update/${data.id}`, data, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

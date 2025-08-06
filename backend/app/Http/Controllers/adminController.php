@@ -14,25 +14,38 @@ class adminController extends Controller
         if (!$user->hasRole('admin')) {
             return response()->json(['error' => 'Non autorisé'], 403);
         }
-        $users = User::select('id', 'name','email')->get();
+        $users = User::all()->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->getRoleNames()->first() ?? 'user',
+            ];
+        });
+
         return response()->json($users);
     }
 
 
 
-    public function grantAdmin(Request $request){
+    public function updateUserRole(Request $request, $userId){
+        $user = $request->user();
+        if(!$user->hasRole('admin')){
+            return response()->json(['error' => 'Non autorisé'], 403);
+        }
 
-        $user =$request->user();
-        if($user->hasRole('admin')){
-            User::findorfail($request->id)->assignRole('admin');
-            return response()->json(['message' => 'Admin granted successfully']);
-
-
-
-        }else{
-        return response()->json(['error' => 'Non autorisé'], 403);
+        $targetUser = User::findOrFail($userId);
+        $newRole = $request->newRole; 
 
 
-    }}
+        $targetUser->assignRole($newRole);
+
+
+        return response()->json(['message' => 'Rôle mis à jour avec succès',  'role' => $newRole]);
+    }
+
+
+
+
 
 }

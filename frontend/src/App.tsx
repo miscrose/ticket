@@ -10,7 +10,8 @@ import Dashboard from './pages/Dashboard'
 import Calendrier from './pages/Calendrier';
 import KanbanPage from './pages/Kanban';
 import ProfilePage from './pages/Profile';
-
+import ChartPage from './pages/ChartPage'
+import AdminPage from './pages/adminPage'
 
 function App() {
   
@@ -25,6 +26,8 @@ function App() {
             <Route path="calendrier" element={<Calendrier />} />
             <Route path="profil" element={<ProfilePage />} />
             <Route path="kanban" element={<KanbanPage />} />
+            <Route path="ChartPage" element={<ChartPage />} />
+            <Route path="adminPage" element={<AdminPage />} />
           </Route>
    
         </Routes>
