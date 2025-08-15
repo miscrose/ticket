@@ -8,6 +8,7 @@ const baseNavItems = [
   { title: "calendrier", url: "/dashboard/calendrier", icon: IconListDetails },
   { title: "Profil", url: "/dashboard/Profil", icon: IconUsers },
   { title: "Kanban", url: "/dashboard/kanban", icon: IconListDetails },
+  { title: "Historique des tickets", url: "/dashboard/ticketHistory", icon: IconListDetails },
 ];
 
 export function AppSidebar() {

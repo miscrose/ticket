@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamp('done_at')->nullable();
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
 
             $table->timestamps();
         });

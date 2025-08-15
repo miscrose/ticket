@@ -7,6 +7,7 @@ export interface Ticket {
   created_at: string
   done_at?: string
   user?: { name: string }
+  creator?: { name: string }
 }
 
 export type TicketStatus = Ticket["status"]

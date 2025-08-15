@@ -13,9 +13,14 @@ class Ticket extends Model
     'priority',
     'user_id',
     'done_at',
+    'created_by',
     ];
 
     public function user() {
       return $this->belongsTo(User::class);
   }
+  public function creator()
+{
+    return $this->belongsTo(User::class, 'created_by');
+}
 }

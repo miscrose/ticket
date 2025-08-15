@@ -10,6 +10,7 @@ import axios from "axios";
 import { toast, Toaster } from "sonner";
 import { Input } from "@/components/ui/input"
 import { Button } from "../../components/ui/button";
+import { CommentModal } from "./commentModal";
 const columns = [
   { id: "todo" as const, title: "À faire", color: "bg-blue-50 border-blue-200" },
   { id: "in-progress" as const, title: "En cours", color: "bg-orange-50 border-orange-200" },
@@ -22,6 +23,8 @@ export function KanbanBoard() {
   const [draggedTicket, setDraggedTicket] = useState<string | null>(null)
   const [createOpen, setCreateOpen] = useState(false);
   const [editTicket, setEditTicket] = useState<Ticket | null>(null); 
+  const [commentTicketId, setCommentTicketId] = useState<string | null>(null);
+  const [commentTicketTitle, setCommentTicketTitle] = useState<string | null>(null);
   const handleSubmitTicket = async (data: any) => {
     try {
       if (data.id) {
@@ -135,12 +138,27 @@ export function KanbanBoard() {
               onDragStart={handleDragStart}
               onViewDetails={handleViewDetails}
               onEdit={setEditTicket}
+              onShowComments={(id: string, title: string) => {
+                setCommentTicketId(id);
+                setCommentTicketTitle(title);
+              }}
             />
           )
         })}
       </div>
 
       <TicketModal ticket={selectedTicket} isOpen={!!selectedTicket} onClose={() => setSelectedTicket(null)} />
+      {commentTicketId && (
+        <CommentModal
+          ticketId={commentTicketId}
+          ticketTitle={commentTicketTitle ?? ""}
+          isOpen={!!commentTicketId}
+          onClose={() => {
+            setCommentTicketId(null);
+            setCommentTicketTitle(null);
+          }}
+        />
+      )}
     </div>
   )
 }

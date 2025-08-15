@@ -21,6 +21,9 @@ class TicketController extends Controller
            
             $data['user_id'] = $user->id;
         }
+
+        $data['created_by'] = $user->id;
+
         if($request->status =='done'){
             $data['done_at'] = now();
         }else{
@@ -39,7 +42,7 @@ class TicketController extends Controller
         }
 
         if ($user->hasRole('admin')) {
-            $allTickets = Ticket::with('user')->get();
+            $allTickets = Ticket::with(['user', 'creator'])->get();
             return response()->json([
                 'tickets' => $allTickets,
             ]);
@@ -53,6 +56,53 @@ class TicketController extends Controller
     
         return response()->json([
             'tickets' => $allTickets,
+        ]);
+    }
+
+    public function show_tickets_paginated(Request $request)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
+        }
+
+        $perPage = $request->input('per_page', 15);
+        $page = $request->input('page', 1);
+        $search = $request->input('search', '');
+        $status = $request->input('status', '');
+
+        $query = Ticket::with(['user', 'creator']);
+
+
+        if ($search) {
+            $query->where('title', 'like', '%' . $search . '%');
+        }
+
+       
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+
+        if (!$user->hasRole('admin')) {
+            $query->where('user_id', $user->id);
+        }
+
+       
+        $query->orderBy('created_at', 'desc');
+
+        $tickets = $query->paginate($perPage, ['*'], 'page', $page);
+
+        return response()->json([
+            'tickets' => $tickets->items(),
+            'pagination' => [
+                'current_page' => $tickets->currentPage(),
+                'last_page' => $tickets->lastPage(),
+                'per_page' => $tickets->perPage(),
+                'total' => $tickets->total(),
+                'from' => $tickets->firstItem(),
+                'to' => $tickets->lastItem(),
+            ]
         ]);
     }
 

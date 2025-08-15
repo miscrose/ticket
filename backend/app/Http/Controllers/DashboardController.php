@@ -18,35 +18,23 @@ class DashboardController extends Controller
         $startDate = now()->subDays($days - 1)->startOfDay();
         $endDate = now()->endOfDay();
 
-        $statusCounts = Ticket::where('user_id', $user->id)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->pluck('count', 'status');
+        if ($user->hasRole('admin')) {
+            $statusCounts = Ticket::whereBetween('created_at', [$startDate, $endDate])
+                ->selectRaw('status, COUNT(*) as count')
+                ->groupBy('status')
+                ->pluck('count', 'status');
+        } else {
+            $statusCounts = Ticket::where('user_id', $user->id)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->selectRaw('status, COUNT(*) as count')
+                ->groupBy('status')
+                ->pluck('count', 'status');
+        }
 
         return response()->json($statusCounts);
     }
 
-    public function donePerDay(Request $request)
-    {
-        $user = $request->user();
-        if (!$user) {
-            return response()->json(['error' => 'Unauthenticated'], 401);
-        }
-        $days = $request->input('days', 7);
-        $startDate = now()->subDays($days - 1)->startOfDay();
-        $endDate = now()->endOfDay();
-
-        $done = Ticket::where('user_id', $user->id)
-            ->whereNotNull('done_at')
-            ->whereBetween('done_at', [$startDate, $endDate])
-            ->selectRaw('DATE(done_at) as date, COUNT(*) as count')
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
-
-        return response()->json($done);
-    }
+  
 
     public function doneTicketsDetailsPerDay(Request $request)
     {
@@ -59,10 +47,16 @@ class DashboardController extends Controller
         $startDate = now()->subDays($days - 1)->startOfDay();
         $endDate = now()->endOfDay();
     
-        $tickets = Ticket::where('user_id', $user->id)
-            ->whereNotNull('done_at')
-            ->whereBetween('done_at', [$startDate, $endDate])
-            ->get(['id', 'title', 'created_at', 'done_at']);
+        if ($user->hasRole('admin')) {
+            $tickets = Ticket::whereNotNull('done_at')
+                ->whereBetween('done_at', [$startDate, $endDate])
+                ->get(['id', 'title', 'created_at', 'done_at']);
+        } else {
+            $tickets = Ticket::where('user_id', $user->id)
+                ->whereNotNull('done_at')
+                ->whereBetween('done_at', [$startDate, $endDate])
+                ->get(['id', 'title', 'created_at', 'done_at']);
+        }
     
        
         $ticketTitles = [];

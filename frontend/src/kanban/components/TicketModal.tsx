@@ -1,4 +1,4 @@
-import React from "react";
+
 
 
 import {
@@ -67,6 +67,7 @@ export function TicketModal({ ticket, isOpen, onClose }: TicketModalProps) {
           <div className="text-sm text-gray-600">
             {ticket.user && <p>Assigné à: {ticket.user.name}</p>}
             <p>Créé le: {new Date(ticket.created_at).toLocaleDateString("fr-FR")}</p>
+            {ticket.creator && <p>Créé par: {ticket.creator.name}</p>}
           </div>
         </div>
         <DialogClose asChild>

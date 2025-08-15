@@ -7,7 +7,6 @@ import { Button } from "./ui/Button"
 import type { Ticket } from "../types/ticket"
 import { TicketFormModal } from "./TicketFormModal"
 
-
 const CalendarIcon = () => (
   <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path
@@ -42,16 +41,24 @@ const EyeIcon = () => (
   </svg>
 )
 
+const PencilIcon = () => (
+  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L5 11.828a2 2 0 010-2.828L13 5z" />
+  </svg>
+)
+
 interface TicketCardProps {
   ticket: Ticket
   isDragging?: boolean
   onDragStart: (e: React.DragEvent, ticketId: string) => void
   onViewDetails: (ticket: Ticket) => void
   onEdit: (ticket: Ticket) => void
+  onShowComments: (ticketId: string, ticketTitle: string) => void
 }
 
-export function TicketCard({ ticket, isDragging, onDragStart, onViewDetails, onEdit }: TicketCardProps) {
+export function TicketCard({ ticket, isDragging, onDragStart, onViewDetails, onEdit, onShowComments }: TicketCardProps) {
   const [editOpen, setEditOpen] = useState(false)
+  
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high":
@@ -64,11 +71,7 @@ export function TicketCard({ ticket, isDragging, onDragStart, onViewDetails, onE
         return "bg-gray-100 text-gray-800"
     }
   }
-  const PencilIcon = () => (
-    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L5 11.828a2 2 0 010-2.828L13 5z" />
-    </svg>
-  )
+
   return (
     <>
       <Card
@@ -78,26 +81,28 @@ export function TicketCard({ ticket, isDragging, onDragStart, onViewDetails, onE
           isDragging ? "opacity-50 rotate-2 scale-105" : ""
         }`}
       >
-        <div className="flex ">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium line-clamp-2">
+        <CardHeader className="pb-2">
+          <div className="flex items-start justify-between">
+            <CardTitle className="text-sm font-medium line-clamp-2 flex-1 pr-2">
               {ticket.title}
             </CardTitle>
-          </CardHeader>
-          <button
-            className="ml-auto text-sm p-1 hover:bg-gray-100 rounded"
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit(ticket);
-            }}
-            title="Modifier le ticket"
-            type="button"
-          >
-            <PencilIcon />
-          </button>
-        </div>
+            <button
+              className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded p-1 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(ticket);
+              }}
+              title="Modifier le ticket"
+              type="button"
+            >
+              <PencilIcon />
+            </button>
+          </div>
+        </CardHeader>
+        
         <CardContent className="pt-0">
           <p className="text-xs text-gray-600 mb-3 line-clamp-2">{ticket.description}</p>
+          
           <div className="flex items-center justify-between mb-3">
             <Badge className={getPriorityColor(ticket.priority)}>{ticket.priority}</Badge>
             <div className="flex items-center text-xs text-gray-500">
@@ -105,6 +110,7 @@ export function TicketCard({ ticket, isDragging, onDragStart, onViewDetails, onE
               <span className="ml-1">{new Date(ticket.created_at).toLocaleDateString("fr-FR")}</span>
             </div>
           </div>
+          
           {ticket.user ? (
             <div className="flex items-center text-xs text-gray-600 mb-3">
               <UserIcon />
@@ -116,17 +122,30 @@ export function TicketCard({ ticket, isDragging, onDragStart, onViewDetails, onE
               <span className="ml-1">Non assigné</span>
             </div>
           )}
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full bg-transparent hover:bg-white/80"
-            onClick={() => onViewDetails(ticket)}
-          >
-            <EyeIcon />
-            <span className="ml-1">Voir détails</span>
-          </Button>
+          
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 h-8 text-xs bg-transparent hover:bg-white/80"
+              onClick={() => onViewDetails(ticket)}
+            >
+              <EyeIcon />
+              <span className="ml-1">Détails</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 h-8 text-xs bg-transparent hover:bg-white/80"
+              onClick={() => onShowComments(ticket.id, ticket.title)}
+            >
+              💬
+              <span className="ml-1">Comms</span>
+            </Button>
+          </div>
         </CardContent>
       </Card>
+      
       <TicketFormModal
         ticket={ticket}
         isOpen={editOpen}

@@ -26,10 +26,10 @@ import {
 } from "@/components/ui/select"
 import axios from "axios"
 
-// Type pour les données reçues de l'API (nouvelle structure)
+
 type ChartDataPoint = {
   date: string;
-  [key: string]: string | number; // Pour les tickets dynamiques
+  [key: string]: string | number; 
 };
 
 const intervalOptions = [
@@ -38,7 +38,7 @@ const intervalOptions = [
   { key: "30", label: "30 jours" },
 ];
 
-// Couleurs pour les tickets
+
 const ticketColors = [
   "var(--chart-1)",
   "var(--chart-2)", 
@@ -54,6 +54,7 @@ export function ChartBarStacked() {
   const [interval, setInterval] = useState(intervalOptions[0].key);
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [chartConfig, setChartConfig] = useState<ChartConfig>({});
+  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,7 +69,7 @@ export function ChartBarStacked() {
 
         const data: ChartDataPoint[] = res.data;
         
-        // Collecter tous les titres de tickets uniques
+      
         const ticketTitles = new Set<string>();
         data.forEach(day => {
           Object.keys(day).forEach(key => {
@@ -78,7 +79,7 @@ export function ChartBarStacked() {
           });
         });
 
-        // Créer la config du chart
+        
         const config: ChartConfig = {};
         Array.from(ticketTitles).forEach((title, index) => {
           config[title] = {
@@ -134,7 +135,23 @@ export function ChartBarStacked() {
                 return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
               }}
             />
-            <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+            <ChartTooltip
+              content={(tooltipProps) => {
+                const { payload, label, active } = tooltipProps as any
+                const filteredPayload =
+                  hoveredKey && payload
+                    ? payload.filter((item: any) => item.dataKey === hoveredKey)
+                    : payload
+                return (
+                  <ChartTooltipContent
+                    active={active}
+                    label={label}
+                    payload={filteredPayload}
+                    hideLabel
+                  />
+                )
+              }}
+            />
           
             {Object.keys(chartConfig).map((ticketTitle, index) => (
               <Bar
@@ -143,6 +160,8 @@ export function ChartBarStacked() {
                 stackId="a"
                 fill={ticketColors[index % ticketColors.length]}
                 radius={index === 0 ? [0, 0, 4, 4] : index === Object.keys(chartConfig).length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+                onMouseEnter={() => setHoveredKey(ticketTitle)}
+                onMouseLeave={() => setHoveredKey(null)}
               />
             ))}
           </BarChart>

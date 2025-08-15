@@ -24,7 +24,7 @@ export function LoginForm() {
       localStorage.setItem("token", res.data.token)
       localStorage.setItem("role", res.data.role)
       localStorage.setItem("user", JSON.stringify(res.data.user));
-      navigate("/dashboard")
+      navigate("/dashboard/ChartPage")
     } catch (err: any) {
       setError(err.response?.data?.error || "Erreur de connexion")
     }

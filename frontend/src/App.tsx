@@ -12,6 +12,7 @@ import KanbanPage from './pages/Kanban';
 import ProfilePage from './pages/Profile';
 import ChartPage from './pages/ChartPage'
 import AdminPage from './pages/adminPage'
+import TicketHistoryPage from './pages/TicketHistoryPage'
 
 function App() {
   
@@ -28,6 +29,7 @@ function App() {
             <Route path="kanban" element={<KanbanPage />} />
             <Route path="ChartPage" element={<ChartPage />} />
             <Route path="adminPage" element={<AdminPage />} />
+            <Route path="ticketHistory" element={<TicketHistoryPage />} />
           </Route>
    
         </Routes>
