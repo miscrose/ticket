@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { IconMenu2, IconDashboard, IconListDetails, IconUsers } from "@tabler/icons-react"
+import { IconMenu2, IconDashboard, IconCalendarEvent, IconUserCircle, IconLayoutKanban, IconHistory, IconShield } from "@tabler/icons-react"
 import axios from 'axios';
 
 const baseNavItems = [
   { title: "Dashboard", url: "/dashboard/ChartPage", icon: IconDashboard },
-  { title: "calendrier", url: "/dashboard/calendrier", icon: IconListDetails },
-  { title: "Profil", url: "/dashboard/Profil", icon: IconUsers },
-  { title: "Kanban", url: "/dashboard/kanban", icon: IconListDetails },
-  { title: "Historique des tickets", url: "/dashboard/ticketHistory", icon: IconListDetails },
+  { title: "calendrier", url: "/dashboard/calendrier", icon: IconCalendarEvent },
+  { title: "Profil", url: "/dashboard/Profil", icon: IconUserCircle },
+  { title: "Kanban", url: "/dashboard/kanban", icon: IconLayoutKanban },
+  { title: "Historique des tickets", url: "/dashboard/ticketHistory", icon: IconHistory },
 ];
 
 export function AppSidebar() {
@@ -32,7 +32,7 @@ export function AppSidebar() {
             {
               title: "Admin",
               url: "/dashboard/adminPage",
-              icon: IconUsers,
+              icon: IconShield,
             },
           ];
         }

@@ -101,6 +101,29 @@ export default function TicketHistoryTable() {
     setSelectedTicket(null);
   };
 
+  const handleExportPdf = async (ticketId: number | string) => {
+    try {
+      const res = await axios.get(`http://127.0.0.1:8000/api/tickets/${ticketId}/export-pdf`, {
+        responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Accept: 'application/pdf'
+        }
+      });
+      const blob = new Blob([res.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `ticket-${ticketId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   if (loading) return (
     <div className="h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6 flex items-center justify-center">
       <div className="text-center">
@@ -113,7 +136,6 @@ export default function TicketHistoryTable() {
   return (
     <div className="bg-gradient-to-br from-slate-50 to-blue-50 p-4">
       <div className="max-w-7xl mx-auto space-y-4">
-        {/* Header Section - Compact */}
         <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-3">
             <div>
@@ -163,7 +185,6 @@ export default function TicketHistoryTable() {
           </div>
         </div>
 
-        {/* Table Section */}
         <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
           {paginatedTickets.length === 0 ? (
             <div className="text-center py-12">
@@ -188,6 +209,7 @@ export default function TicketHistoryTable() {
                       <TableCell className="font-semibold text-slate-700 py-3 px-4 text-xs uppercase tracking-wide">Modifié le</TableCell>
                       <TableCell className="font-semibold text-slate-700 py-3 px-4 text-xs uppercase tracking-wide">Assigné à</TableCell>
                       <TableCell className="font-semibold text-slate-700 py-3 px-4 text-xs uppercase tracking-wide">Créé par</TableCell>
+                      <TableCell className="font-semibold text-slate-700 py-3 px-4 text-xs uppercase tracking-wide">PDF</TableCell>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -247,13 +269,23 @@ export default function TicketHistoryTable() {
                             {ticket.creator?.name || "—"}
                           </span>
                         </TableCell>
+                        <TableCell className="py-3 px-4">
+                          <button
+                            onClick={() => handleExportPdf(ticket.id)}
+                            className="inline-flex items-center gap-1 px-2 py-1 text-xs border border-slate-300 rounded-md hover:bg-slate-100"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
+                            </svg>
+                            PDF
+                          </button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </div>
 
-              {/* Pagination Controls */}
               {pagination && pagination.last_page > 1 && (
                 <div className="bg-slate-50 px-4 py-3 border-t border-slate-200">
                   <div className="flex items-center justify-between">
@@ -313,7 +345,6 @@ export default function TicketHistoryTable() {
           )}
         </div>
 
-        {/* Modal des commentaires */}
         {selectedTicket && (
           <CommentModal
             ticketId={selectedTicket.id}

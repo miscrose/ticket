@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\TicketRequest;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TicketController extends Controller
 {
@@ -106,8 +107,6 @@ class TicketController extends Controller
         ]);
     }
 
-
-
     public function ticket_status_update(Request $request, $id)
     {
         $user = $request->user();
@@ -139,13 +138,44 @@ class TicketController extends Controller
        
     }
 
-
     public function update(Request $request, $id)
-{
-    $ticket = Ticket::findOrFail($id);
-    $ticket->update($request->all());
-    $ticket->load('user');
-    return response()->json($ticket);
-}
+    {
+        $ticket = Ticket::findOrFail($id);
+        $ticket->update($request->all());
+        $ticket->load('user');
+        return response()->json($ticket);
+    }
 
+    public function exportTicketPDF(Request $request, $id)
+    {
+        $user = $request->user();
+        
+        if (!$user) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
+        }
+
+        $ticket = Ticket::with([
+            'user',
+            'creator',
+            'comments.user',
+            'comments.attachments',
+        ])->find($id);
+        
+        if (!$ticket) {
+            return response()->json(['error' => 'Ticket non trouvé'], 404);
+        }
+
+       
+        if ($ticket->user_id != $user->id && !$user->hasRole('admin')) {
+            return response()->json(['error' => 'Non autorisé à exporter ce ticket'], 403);
+        }
+
+        
+        $pdf = Pdf::loadView('pdf.ticket', [
+            'ticket' => $ticket,
+        ])->setPaper('a4', 'portrait');
+
+     
+        return $pdf->download('ticket-' . $ticket->id . '.pdf');
+    }
 }

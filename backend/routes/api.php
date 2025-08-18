@@ -31,6 +31,7 @@ Route::middleware('auth:api')->group(function () {
      Route::get('/dashboard/countTicket', [DashboardController::class, 'countTicketByPeriod']);
      Route::get('/dashboard/doneTicketsDetailsPerDay', [DashboardController::class, 'doneTicketsDetailsPerDay']);
     Route::put('/tickets/update/{id}', [TicketController::class, 'update']);
+    Route::get('/tickets/{id}/export-pdf', [TicketController::class, 'exportTicketPDF']);
 
    
     Route::post('/ticket-comments', [ticketcommentsController::class, 'store']);
